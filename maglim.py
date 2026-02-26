@@ -19,7 +19,7 @@ parser.add_argument("--filename", default="tablafinal.fits", type=str, help="Est
 parser.add_argument("--flags", nargs="+", default=None, help="nombre de flags para aplicar. EJ: flags_footprint=1") #selección de flags
 parser.add_argument("--mag", required=True, help="Nombre columna magnitud")
 parser.add_argument("--color", default="blue", type=str, help="Color del scatter")
-# parser.add_argument("--xlim", nargs=2, type=float, default=None, help="Límites eje x: min max")
+parser.add_argument("--mag_range", nargs=2, type=float, default=None, help="Rango de mag: min max")
 parser.add_argument("--bins", default=0.2, type=float, help="tamaño del bin en mag")
 parser.add_argument("--yscale", default="linear", choices=["linear", "log"], help="Escala del eje Y")
 
@@ -88,7 +88,9 @@ def main():
     mag_clean = mag[mask_flags]
     mask_valid = np.isfinite(mag_clean)
     mag_clean = mag_clean[mask_valid]
-    
+    if args.mag_range is not None:
+        mag_min, mag_max = args.mag_range
+        mag_clean = mag_clean[(mag_clean > mag_min) & (mag_clean < mag_max)]
     
     # Histograma
     min_mag = np.nanmin(mag_clean)
